@@ -50,28 +50,27 @@ func (s Puzzle) GoString() string {
 	return string(out)
 }
 
-// Solve solves the puzzle in-place. If no solution is possible, ok will be
-// false.
-func (s *Puzzle) Solve() (ok bool) {
+// Solve returns a solution to the puzzle. If no solution is possible, ok will
+// be false.
+func (s Puzzle) Solve() (r Puzzle, ok bool) {
 	if !valid(s) {
-		return false
+		return s, false
 	}
 	if isComplete(s) {
-		return true
+		return s, true
 	}
 	i := firstEmptyIndex(s)
 	for _, n := range candidatesFor(s, i) {
 		s[i] = n
-		ok = s.Solve()
+		r, ok = s.Solve()
 		if ok {
 			return
 		}
 	}
-	s[i] = 0
-	return false
+	return Puzzle{}, false
 }
 
-func valid(s *Puzzle) bool {
+func valid(s Puzzle) bool {
 	// check rows
 	for i := 0; i < 9; i++ {
 		var z uint16 // bitmap for numbers seen
@@ -133,7 +132,7 @@ func valid(s *Puzzle) bool {
 	return true
 }
 
-func isComplete(s *Puzzle) bool {
+func isComplete(s Puzzle) bool {
 	// assume that s is valid
 	for _, n := range s {
 		if n == 0 {
@@ -143,7 +142,7 @@ func isComplete(s *Puzzle) bool {
 	return true
 }
 
-func firstEmptyIndex(s *Puzzle) int {
+func firstEmptyIndex(s Puzzle) int {
 	for i, n := range s {
 		if n == 0 {
 			return i
@@ -152,7 +151,7 @@ func firstEmptyIndex(s *Puzzle) int {
 	return -1
 }
 
-func candidatesFor(s *Puzzle, i int) []uint8 {
+func candidatesFor(s Puzzle, i int) []uint8 {
 	var z uint16 // bitmap
 	i, j := i/9, i%9
 	// visit row
