@@ -79,7 +79,11 @@ func (p Puzzle) solve() (s Puzzle, ok bool) {
 		return p, true
 	}
 	i := p.firstEmptyIndex()
-	for _, n := range p.candidatesFor(i) {
+	z := p.candidatesFor(i)
+	for n := uint8(1); n <= 9; n++ {
+		if z&(1<<n) == 0 {
+			continue // not a valid candidate
+		}
 		p[i] = n
 		s, ok = p.solve()
 		if ok {
@@ -170,7 +174,7 @@ func (p Puzzle) firstEmptyIndex() int {
 	return -1
 }
 
-func (p Puzzle) candidatesFor(i int) []uint8 {
+func (p Puzzle) candidatesFor(i int) uint16 {
 	var z uint16 // bitmap
 	i, j := i/9, i%9
 	// visit row
@@ -190,11 +194,10 @@ func (p Puzzle) candidatesFor(i int) []uint8 {
 			z |= 1 << n
 		}
 	}
-	var r []uint8
-	for n := 1; n <= 9; n++ {
-		if z&(1<<n) == 0 {
-			r = append(r, uint8(n))
-		}
+	// flip z bits, such that bits set to 1 represent a valid candidate
+	for x := 1; x <= 9; x++ {
+		z ^= 1 << x
 	}
-	return r
+	z &^= 1
+	return z
 }
