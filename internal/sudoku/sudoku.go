@@ -71,13 +71,17 @@ func (p Puzzle) Solve() (s Puzzle, ok bool) {
 	if !p.isValid() {
 		return p, false
 	}
+	return p.solve()
+}
+
+func (p Puzzle) solve() (s Puzzle, ok bool) {
 	if p.isComplete() {
 		return p, true
 	}
 	i := p.firstEmptyIndex()
 	for _, n := range p.candidatesFor(i) {
 		p[i] = n
-		s, ok = p.Solve()
+		s, ok = p.solve()
 		if ok {
 			return
 		}
