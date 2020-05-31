@@ -12,9 +12,20 @@ type Puzzle [9 * 9]uint8
 
 func (s Puzzle) String() string {
 	var b strings.Builder
+	const sep = "+-------+-------+-------+"
 	for i := 0; i < 9; i++ {
-		fmt.Fprintf(&b, "%v\n", s[i*9:i*9+9])
+		if i%3 == 0 {
+			fmt.Fprintln(&b, sep)
+		}
+		for j := 0; j < 9; j++ {
+			if j%3 == 0 {
+				fmt.Fprint(&b, "| ")
+			}
+			fmt.Fprintf(&b, "%d ", s[i*9+j])
+		}
+		fmt.Fprintln(&b, "|")
 	}
+	fmt.Fprint(&b, sep)
 	return b.String()
 }
 
