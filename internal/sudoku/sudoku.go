@@ -82,7 +82,7 @@ func (p Puzzle) Solve() (s Puzzle, ok bool) {
 			return
 		}
 	}
-	return Puzzle{}, false
+	return s, false
 }
 
 func (p Puzzle) isValid() bool {
