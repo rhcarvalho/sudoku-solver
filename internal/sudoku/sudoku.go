@@ -71,17 +71,17 @@ func (p Puzzle) Solve() (s Puzzle, ok bool) {
 	if !p.isValid() {
 		return p, false
 	}
-	return p.solve()
+	return p.solve(0)
 }
 
-func (p Puzzle) solve() (s Puzzle, ok bool) {
+func (p Puzzle) solve(offset int) (s Puzzle, ok bool) {
 	if p.isComplete() {
 		return p, true
 	}
-	i := p.firstEmptyIndex()
+	i := p.firstEmptyIndex(offset)
 	for _, n := range p.candidatesFor(i) {
 		p[i] = n
-		s, ok = p.solve()
+		s, ok = p.solve(i + 1)
 		if ok {
 			return
 		}
@@ -161,10 +161,10 @@ func (p Puzzle) isComplete() bool {
 	return true
 }
 
-func (p Puzzle) firstEmptyIndex() int {
-	for i, n := range p {
+func (p Puzzle) firstEmptyIndex(offset int) int {
+	for i, n := range p[offset:] {
 		if n == 0 {
-			return i
+			return offset + i
 		}
 	}
 	return -1
