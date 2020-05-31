@@ -7,10 +7,32 @@ import (
 	"strings"
 )
 
-// Puzzle represents a Sudoku puzzle.
+// Puzzle represents a 9x9 Sudoku puzzle.
 //
-// It is a 9x9 grid, stored as an array in row-major order.
-type Puzzle [9 * 9]uint8
+// It is a 9x9 grid, stored as an array .
+type Puzzle struct {
+	rows  [9 * 9]uint8     // rows in row-major order
+	cols  [9 * 9]uint8     // cols is the transpose of rows
+	boxes [9 * 3 * 3]uint8 // the 3x3 boxes in row-major order
+}
+
+// NewPuzzle creates a new Puzzle from an array of rows in row-major order.
+func NewPuzzle(rows [9 * 9]uint8) Puzzle {
+	p := Puzzle{rows: rows}
+	for j := 0; j < 9; j++ {
+		for i := 0; i < 9; i++ {
+			p.cols[9*j+i] = p.rows[9*i+j]
+		}
+	}
+	for i0 := 0; i0 <3;i0++ {
+		for j0 :=0;j0<3;j0++{
+			for i := i0*3; i < i0*3+3; i++ {
+				for j := j0*3; j < j0*3+3; j++ {
+					p.boxes[...] := p[9*i+j]
+				}
+			}
+		}
+}
 
 // String returns a pretty string representation of the puzzle.
 func (p Puzzle) String() string {
