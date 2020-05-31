@@ -1,7 +1,9 @@
 package sudoku
 
 import (
+	"bytes"
 	"fmt"
+	"go/format"
 	"strings"
 )
 
@@ -10,6 +12,7 @@ import (
 // It is a 9x9 grid, stored as an array in row-major order.
 type Puzzle [9 * 9]uint8
 
+// String returns a pretty string representation of the puzzle.
 func (s Puzzle) String() string {
 	var b strings.Builder
 	const sep = "+-------+-------+-------+"
@@ -27,6 +30,24 @@ func (s Puzzle) String() string {
 	}
 	fmt.Fprint(&b, sep)
 	return b.String()
+}
+
+// GoString implements fmt.GoStringer.
+func (s Puzzle) GoString() string {
+	var b bytes.Buffer
+	b.WriteString("Puzzle{\n")
+	for i := 0; i < 9; i++ {
+		for j := 0; j < 9; j++ {
+			fmt.Fprintf(&b, "%d,", s[i*9+j])
+		}
+		b.WriteByte('\n')
+	}
+	b.WriteByte('}')
+	out, err := format.Source(b.Bytes())
+	if err != nil {
+		panic(err)
+	}
+	return string(out)
 }
 
 // Solve returns a solution to the puzzle. If no solution is possible, ok will
