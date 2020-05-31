@@ -7,9 +7,11 @@ import (
 )
 
 func main() {
-	fmt.Println(sudoku.Puzzle{}.Solve())
+	p := sudoku.Puzzle{}
+	p.Solve()
+	fmt.Println(p)
 
-	fmt.Println(sudoku.Puzzle{
+	p = sudoku.Puzzle{
 		0, 0, 0, 4, 0, 0, 3, 0, 0,
 		0, 0, 0, 0, 6, 3, 0, 4, 9,
 		4, 5, 3, 9, 0, 0, 0, 6, 7,
@@ -19,5 +21,7 @@ func main() {
 		0, 4, 0, 7, 0, 0, 2, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 1, 3,
 		9, 1, 0, 0, 3, 4, 0, 0, 0,
-	}.Solve())
+	}
+	p.Solve()
+	fmt.Println(p)
 }

@@ -6,13 +6,13 @@ import (
 )
 
 func TestValid(t *testing.T) {
-	if !valid(Puzzle{}) {
+	if !valid(&Puzzle{}) {
 		t.Fatalf("empty state should be valid")
 	}
 }
 
 func TestCandidatesFor(t *testing.T) {
-	got := candidatesFor(Puzzle{}, 0)
+	got := candidatesFor(&Puzzle{}, 0)
 	want := []uint8{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("got %v, want %v", got, want)
@@ -31,9 +31,10 @@ func TestSolve(t *testing.T) {
 		0, 0, 0, 0, 0, 0, 0, 1, 3,
 		9, 1, 0, 0, 3, 4, 0, 0, 0,
 	}
-	got, ok := p.Solve()
+	ok := p.Solve()
+	got := p
 	if !ok {
-		t.Fatalf("solution not found")
+		t.Fatalf("solution not found, got:\n%s", got)
 	}
 	want := Puzzle{
 		8, 6, 9, 4, 7, 5, 3, 2, 1,
