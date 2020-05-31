@@ -50,6 +50,21 @@ func (s Puzzle) GoString() string {
 	return string(out)
 }
 
+// Scan implements fmt.Scanner.
+func (s *Puzzle) Scan(state fmt.ScanState, verb rune) error {
+	for i := 0; i < len(s); i++ {
+		r, _, err := state.ReadRune()
+		if err != nil {
+			return err
+		}
+		s[i] = uint8(r - '0')
+		if s[i] > 9 {
+			return fmt.Errorf("invalid input: %q", string(r))
+		}
+	}
+	return nil
+}
+
 // Solve returns a solution to the puzzle. If no solution is possible, ok will
 // be false.
 func (s Puzzle) Solve() (r Puzzle, ok bool) {

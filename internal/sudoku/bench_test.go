@@ -20,3 +20,26 @@ func BenchmarkSolve(b *testing.B) {
 		p.Solve()
 	}
 }
+
+func BenchmarkSolveTestDataEach(b *testing.B) {
+	mustLoadTestData()
+
+	for _, p := range testData {
+		b.Run("", func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				p.Puzzle.Solve()
+			}
+		})
+	}
+}
+
+func BenchmarkSolveTestDataAll(b *testing.B) {
+	mustLoadTestData()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		for _, p := range testData {
+			p.Puzzle.Solve()
+		}
+	}
+}
