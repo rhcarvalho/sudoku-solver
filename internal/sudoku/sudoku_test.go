@@ -33,7 +33,7 @@ func TestSolve(t *testing.T) {
 	}
 	got, ok := p.Solve()
 	if !ok {
-		t.Fatalf("solution not found")
+		t.Fatalf("solution not found, got:\n%s", got)
 	}
 	want := Puzzle{
 		8, 6, 9, 4, 7, 5, 3, 2, 1,
