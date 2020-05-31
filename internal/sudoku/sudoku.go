@@ -72,9 +72,10 @@ func (s *Puzzle) Solve() (ok bool) {
 }
 
 func valid(s *Puzzle) bool {
+	var z uint16 // bitmap for numbers seen
 	// check rows
 	for i := 0; i < 9; i++ {
-		var z uint16 // bitmap for numbers seen
+		z = 0
 		for j := 0; j < 9; j++ {
 			n := s[9*i+j]
 			if n == 0 {
@@ -91,7 +92,7 @@ func valid(s *Puzzle) bool {
 	}
 	// check cols
 	for j := 0; j < 9; j++ {
-		var z uint16 // bitmap for numbers seen
+		z = 0
 		for i := 0; i < 9; i++ {
 			n := s[9*i+j]
 			if n == 0 {
@@ -113,7 +114,7 @@ func valid(s *Puzzle) bool {
 	for _, a := range t {
 		for _, b := range t {
 			for i := a.start; i < a.end; i++ {
-				var z uint16 // bitmap for numbers seen
+				z = 0
 				for j := b.start; j < b.end; j++ {
 					n := s[9*i+j]
 					if n == 0 {
