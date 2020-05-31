@@ -126,8 +126,8 @@ func valid(s Puzzle) bool {
 	}
 	for _, a := range t {
 		for _, b := range t {
+			var z uint16 // bitmap for numbers seen
 			for i := a.start; i < a.end; i++ {
-				var z uint16 // bitmap for numbers seen
 				for j := b.start; j < b.end; j++ {
 					n := s[9*i+j]
 					if n == 0 {
