@@ -50,15 +50,18 @@ func (s Puzzle) GoString() string {
 	return string(out)
 }
 
-// Solve solves the puzzle in-place. If no solution is possible, ok will be
-// false.
-func (s *Puzzle) Solve() (ok bool) {
-	if !valid(s) {
-		return false
+// Solve returns a solution to the puzzle. It returns nil if no solution is
+// possible. It never modifies the original puzzle. If the original puzzle is
+// already solved, it does not allocate and returns a pointer to the original
+// puzzle.
+func (p *Puzzle) Solve() *Puzzle {
+	if !valid(p) {
+		return nil
 	}
-	if isComplete(s) {
-		return true
+	if isComplete(p) {
+		return p
 	}
+	s := &*p
 	i := firstEmptyIndex(s)
 	for _, n := range candidatesFor(s, i) {
 		s[i] = n
@@ -67,7 +70,7 @@ func (s *Puzzle) Solve() (ok bool) {
 			return
 		}
 	}
-	s[i] = 0
+	p[i] = 0
 	return false
 }
 
