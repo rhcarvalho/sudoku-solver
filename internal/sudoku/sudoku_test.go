@@ -79,7 +79,7 @@ func TestValid(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := valid(tt.puzzle)
+			got := tt.puzzle.isValid()
 			want := tt.valid
 			if got != want {
 				t.Fatalf("got %v, want %v", got, want)
@@ -89,7 +89,7 @@ func TestValid(t *testing.T) {
 }
 
 func TestCandidatesFor(t *testing.T) {
-	got := candidatesFor(Puzzle{}, 0)
+	got := Puzzle{}.candidatesFor(0)
 	want := []uint8{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	if !reflect.DeepEqual(got, want) {
 		t.Fatalf("got %v, want %v", got, want)

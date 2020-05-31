@@ -13,7 +13,7 @@ import (
 type Puzzle [9 * 9]uint8
 
 // String returns a pretty string representation of the puzzle.
-func (s Puzzle) String() string {
+func (p Puzzle) String() string {
 	var b strings.Builder
 	const sep = "+-------+-------+-------+"
 	for i := 0; i < 9; i++ {
@@ -24,7 +24,7 @@ func (s Puzzle) String() string {
 			if j%3 == 0 {
 				fmt.Fprint(&b, "| ")
 			}
-			fmt.Fprintf(&b, "%d ", s[i*9+j])
+			fmt.Fprintf(&b, "%d ", p[i*9+j])
 		}
 		fmt.Fprintln(&b, "|")
 	}
@@ -33,12 +33,12 @@ func (s Puzzle) String() string {
 }
 
 // GoString implements fmt.GoStringer.
-func (s Puzzle) GoString() string {
+func (p Puzzle) GoString() string {
 	var b bytes.Buffer
 	b.WriteString("Puzzle{\n")
 	for i := 0; i < 9; i++ {
 		for j := 0; j < 9; j++ {
-			fmt.Fprintf(&b, "%d,", s[i*9+j])
+			fmt.Fprintf(&b, "%d,", p[i*9+j])
 		}
 		b.WriteByte('\n')
 	}
@@ -51,14 +51,14 @@ func (s Puzzle) GoString() string {
 }
 
 // Scan implements fmt.Scanner.
-func (s *Puzzle) Scan(state fmt.ScanState, verb rune) error {
-	for i := 0; i < len(s); i++ {
+func (p *Puzzle) Scan(state fmt.ScanState, verb rune) error {
+	for i := 0; i < len(p); i++ {
 		r, _, err := state.ReadRune()
 		if err != nil {
 			return err
 		}
-		s[i] = uint8(r - '0')
-		if s[i] > 9 {
+		p[i] = uint8(r - '0')
+		if p[i] > 9 {
 			return fmt.Errorf("invalid input: %q", string(r))
 		}
 	}
@@ -67,17 +67,17 @@ func (s *Puzzle) Scan(state fmt.ScanState, verb rune) error {
 
 // Solve returns a solution to the puzzle. If no solution is possible, ok will
 // be false.
-func (s Puzzle) Solve() (r Puzzle, ok bool) {
-	if !valid(s) {
-		return s, false
+func (p Puzzle) Solve() (s Puzzle, ok bool) {
+	if !p.isValid() {
+		return p, false
 	}
-	if isComplete(s) {
-		return s, true
+	if p.isComplete() {
+		return p, true
 	}
-	i := firstEmptyIndex(s)
-	for _, n := range candidatesFor(s, i) {
-		s[i] = n
-		r, ok = s.Solve()
+	i := p.firstEmptyIndex()
+	for _, n := range p.candidatesFor(i) {
+		p[i] = n
+		s, ok = p.Solve()
 		if ok {
 			return
 		}
@@ -85,12 +85,12 @@ func (s Puzzle) Solve() (r Puzzle, ok bool) {
 	return Puzzle{}, false
 }
 
-func valid(s Puzzle) bool {
+func (p Puzzle) isValid() bool {
 	// check rows
 	for i := 0; i < 9; i++ {
 		var z uint16 // bitmap for numbers seen
 		for j := 0; j < 9; j++ {
-			n := s[9*i+j]
+			n := p[9*i+j]
 			if n == 0 {
 				continue
 			}
@@ -107,7 +107,7 @@ func valid(s Puzzle) bool {
 	for j := 0; j < 9; j++ {
 		var z uint16 // bitmap for numbers seen
 		for i := 0; i < 9; i++ {
-			n := s[9*i+j]
+			n := p[9*i+j]
 			if n == 0 {
 				continue
 			}
@@ -129,7 +129,7 @@ func valid(s Puzzle) bool {
 			var z uint16 // bitmap for numbers seen
 			for i := a.start; i < a.end; i++ {
 				for j := b.start; j < b.end; j++ {
-					n := s[9*i+j]
+					n := p[9*i+j]
 					if n == 0 {
 						continue
 					}
@@ -147,9 +147,9 @@ func valid(s Puzzle) bool {
 	return true
 }
 
-func isComplete(s Puzzle) bool {
+func (p Puzzle) isComplete() bool {
 	// assume that s is valid
-	for _, n := range s {
+	for _, n := range p {
 		if n == 0 {
 			return false
 		}
@@ -157,8 +157,8 @@ func isComplete(s Puzzle) bool {
 	return true
 }
 
-func firstEmptyIndex(s Puzzle) int {
-	for i, n := range s {
+func (p Puzzle) firstEmptyIndex() int {
+	for i, n := range p {
 		if n == 0 {
 			return i
 		}
@@ -166,23 +166,23 @@ func firstEmptyIndex(s Puzzle) int {
 	return -1
 }
 
-func candidatesFor(s Puzzle, i int) []uint8 {
+func (p Puzzle) candidatesFor(i int) []uint8 {
 	var z uint16 // bitmap
 	i, j := i/9, i%9
 	// visit row
 	for x := 0; x < 9; x++ {
-		n := s[9*i+x]
+		n := p[9*i+x]
 		z |= 1 << n
 	}
 	// visit col
 	for x := 0; x < 9; x++ {
-		n := s[9*x+j]
+		n := p[9*x+j]
 		z |= 1 << n
 	}
 	// visit square
 	for x := i / 3 * 3; x < i/3*3+3; x++ {
 		for y := j / 3 * 3; y < j/3*3+3; y++ {
-			n := s[9*x+y]
+			n := p[9*x+y]
 			z |= 1 << n
 		}
 	}
