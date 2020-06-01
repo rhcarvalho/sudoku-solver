@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/format"
 	"strings"
+	"sync"
 )
 
 // Puzzle represents a Sudoku puzzle.
@@ -74,18 +75,29 @@ func (p Puzzle) Solve() (s Puzzle, ok bool) {
 	return p.solve()
 }
 
+var candidatesPool = sync.Pool{
+	New: func() interface{} {
+		var s []uint8
+		return &s
+	},
+}
+
 func (p Puzzle) solve() (s Puzzle, ok bool) {
 	if p.isComplete() {
 		return p, true
 	}
 	i := p.firstEmptyIndex()
-	for _, n := range p.candidatesFor(i) {
+	candidates := candidatesPool.Get().(*[]uint8)
+	*candidates = (*candidates)[:0]
+	p.candidatesFor(i, candidates)
+	for _, n := range *candidates {
 		p[i] = n
 		s, ok = p.solve()
 		if ok {
 			return
 		}
 	}
+	candidatesPool.Put(candidates)
 	return s, false
 }
 
@@ -170,7 +182,7 @@ func (p Puzzle) firstEmptyIndex() int {
 	return -1
 }
 
-func (p Puzzle) candidatesFor(i int) []uint8 {
+func (p Puzzle) candidatesFor(i int, ret *[]uint8) {
 	var z uint16 // bitmap
 	i, j := i/9, i%9
 	// visit row
@@ -190,11 +202,9 @@ func (p Puzzle) candidatesFor(i int) []uint8 {
 			z |= 1 << n
 		}
 	}
-	var r []uint8
 	for n := 1; n <= 9; n++ {
 		if z&(1<<n) == 0 {
-			r = append(r, uint8(n))
+			*ret = append(*ret, uint8(n))
 		}
 	}
-	return r
 }
