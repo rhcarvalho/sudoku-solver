@@ -1,0 +1,5 @@
+# Test binary
+*.test
+
+# pprof profiles (CPU, memory, ...)
+*.prof
