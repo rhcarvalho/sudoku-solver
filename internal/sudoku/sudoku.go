@@ -75,10 +75,11 @@ func (p Puzzle) Solve() (s Puzzle, ok bool) {
 }
 
 func (p Puzzle) solve() (s Puzzle, ok bool) {
-	if p.isComplete() {
+	i := p.firstEmptyIndex()
+	if i == -1 {
+		// p is complete
 		return p, true
 	}
-	i := p.firstEmptyIndex()
 	for _, n := range p.candidatesFor(i) {
 		p[i] = n
 		s, ok = p.solve()
@@ -146,16 +147,6 @@ func (p Puzzle) isValid() bool {
 					z |= 1 << n
 				}
 			}
-		}
-	}
-	return true
-}
-
-func (p Puzzle) isComplete() bool {
-	// assume that s is valid
-	for _, n := range p {
-		if n == 0 {
-			return false
 		}
 	}
 	return true
